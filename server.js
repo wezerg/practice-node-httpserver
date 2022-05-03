@@ -36,6 +36,15 @@ const server = http.createServer((req, res) => {
             res.writeHead(200, {'content-type' : "application/json"});
             res.end(JSON.stringify(json));
         }
+        else if(/api\/name\/*/.test(req.url)){
+            const url = req.url.split('/').filter(e => e);
+            const json = {"user" : {}};
+            for (let [key, value] of db) {
+                key === parseInt(url[2]) && (json.user = value);
+            }
+            res.writeHead(200, {'content-type' : "application/json"});
+            res.end(JSON.stringify(json));
+        }
         else{
             res.writeHead(404, {'content-type':'text/html'});
             res.write(fs.readFileSync(path.join(__dirname, "public", "pages", "404.html"), {encoding: 'utf-8'}));
