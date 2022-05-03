@@ -16,29 +16,13 @@ const server = http.createServer((req, res) => {
                 res.end();
             }
         }
-        else if(req.url === "/public/images/image.jpg"){
-            if (req.method === "GET") {
-                res.writeHead(200, {'content-type':'image/jpg'});
-                fs.readFile(path.join(__dirname, "public", "images", "image.jpg"), function(err, data){
-                    res.end(data);
-                });
-            }
-        }
-        else if(req.url === "/public/css/style.css"){
-            if (req.method === "GET") {
-                res.writeHead(200, {'content-type': 'text/css'});
-                fs.readFile(path.join(__dirname, "public", "css", "style.css"), function(err, data){
-                    res.end(data);
-                });
-            }
-        }
-        else if(req.url === "/public/js/script.js"){
-            if (req.method === "GET") {
-                res.writeHead(200, {'content-type': 'text/js'});
-                fs.readFile(path.join(__dirname, "public", "js", "script.js"), function(err, data){
-                    res.end(data);
-                });
-            }
+        else if(/public*/.test(req.url)){
+            let file = req.url.split('/').filter(e => e)[1];
+            let ext = file.split('.')[1];
+            res.writeHead(200, {'content-type': ext === "jpg" ? "image/jpeg" : ext === "png" ? "image/png" : "text/" + ext});
+            fs.readFile(path.join(__dirname, "public", ext, file), function(err, data){
+                res.end(data);
+            });
         }
         else{
             res.writeHead(404, {'content-type':'text/html'});
@@ -46,6 +30,7 @@ const server = http.createServer((req, res) => {
             res.end();
         }
     } catch (error) {
+        console.log(error)
         res.writeHead(500, {'content-type':'text/html'});
         res.write(fs.readFileSync(path.join(__dirname, "public", "pages", "500.html"), {encoding: 'utf-8'}));
         res.end();
