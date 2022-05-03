@@ -2,6 +2,12 @@ const http = require('http');
 const path = require('path');
 const fs = require('fs');
 
+const db = new Map();
+let id = 0;
+db.set(id++, {nom: "Alice"});
+db.set(id++, {nom: "Bob"});
+db.set(id++, {nom: "Charlie"});
+
 const server = http.createServer((req, res) => {
     try {
         if (req.url === "/") {
@@ -23,6 +29,12 @@ const server = http.createServer((req, res) => {
             fs.readFile(path.join(__dirname, "public", ext, file), function(err, data){
                 res.end(data);
             });
+        }
+        else if(req.url === "/api/names"){
+            const json = {"users" : {}};
+            json.users = Object.fromEntries(db);
+            res.writeHead(200, {'content-type' : "application/json"});
+            res.end(JSON.stringify(json));
         }
         else{
             res.writeHead(404, {'content-type':'text/html'});
