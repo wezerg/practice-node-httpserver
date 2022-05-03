@@ -32,6 +32,14 @@ const server = http.createServer((req, res) => {
                 });
             }
         }
+        else if(req.url === "/public/js/script.js"){
+            if (req.method === "GET") {
+                res.writeHead(200, {'content-type': 'text/js'});
+                fs.readFile(path.join(__dirname, "public", "js", "script.js"), function(err, data){
+                    res.end(data);
+                });
+            }
+        }
         else{
             res.writeHead(404, {'content-type':'text/html'});
             res.write(fs.readFileSync(path.join(__dirname, "public", "pages", "404.html"), {encoding: 'utf-8'}));
