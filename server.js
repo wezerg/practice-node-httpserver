@@ -42,8 +42,15 @@ const server = http.createServer((req, res) => {
             for (let [key, value] of db) {
                 key === parseInt(url[2]) && (json.user = value);
             }
-            res.writeHead(200, {'content-type' : "application/json"});
-            res.end(JSON.stringify(json));
+            if (!json.user.nom) {
+                res.writeHead(404, {'content-type':'text/html'});
+                res.write(fs.readFileSync(path.join(__dirname, "public", "pages", "404.html"), {encoding: 'utf-8'}));
+                res.end();
+            }
+            else{
+                res.writeHead(200, {'content-type' : "application/json"});
+                res.end(JSON.stringify(json));
+            }
         }
         else{
             res.writeHead(404, {'content-type':'text/html'});
